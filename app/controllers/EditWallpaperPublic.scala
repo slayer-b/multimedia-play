@@ -12,22 +12,38 @@ import play.api.libs.json.{Json, _}
 object EditWallpaperPublic extends Controller {
   val logger = Logger
 
-  val wallpaperEditDataReads = Json.reads[WallpaperEditData]
-
+  implicit val wallpaperEntryReads = Json.reads[WallpaperEntry]
+  implicit val wallpaperEntryListWrites = Json.writes[WallpaperEntry]
 
   def edit = Action(parse.json) { implicit request =>
     logger.info("edit")
-    Json.fromJson[WallpaperEditData](request.body)(wallpaperEditDataReads).asOpt.map { data =>
+    Json.fromJson[WallpaperEntry](request.body).map { data =>
+      MyTestEhCache.replace(data)
       Ok(Json.toJson(
         Map("status" -> "OK")
       ))
-    }.getOrElse {
-      Ok(Json.toJson(
-        Map("status" -> "FAIL")
-      ))
+    }.recoverTotal {
+      e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
     }
+  }
+  
+  def view = Action(parse.json) {implicit request =>
+    logger.info("view")
+    Ok(JsArray(
+      MyTestEhCache.findAll().map(Json.toJson(_))
+    ))
+  }
+
+  def accept = Action(parse.json) {implicit request =>
+    logger.info("accept")
+    Ok("Accepted")
+  }
+
+  def reject = Action(parse.json) {implicit request =>
+    logger.info("reject")
+    Ok("Rejected")
   }
 
 }
 
-case class WallpaperEditData(value: String, field: String, id: Long)
+case class WallpaperEntry(id: String, field: String, value: String)

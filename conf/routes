@@ -3,8 +3,11 @@
 # ~~~~
 
 GET     /docs                       controllers.Application.index
+GET     /test.html	                controllers.Application.testTable
 POST    /p/c/w/edit                 controllers.EditWallpaperPublic.edit
-
+POST    /p/c/w/accept               controllers.EditWallpaperPublic.accept
+POST    /p/c/w/reject               controllers.EditWallpaperPublic.reject
+POST    /p/c/w/view_cache.json      controllers.EditWallpaperPublic.view
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /p/a/*file                  controllers.Assets.at(path="/public", file)
