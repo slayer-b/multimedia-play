@@ -16,5 +16,16 @@ object Application extends Controller {
     logger.info("Rendering table view")
     Ok(views.html.test_table())
   }
+  
+  def javascriptRoutes = Action { implicit request =>
+  import routes.javascript._
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+        routes.javascript.EditWallpaperPublic.view,
+        routes.javascript.EditWallpaperPublic.edit
+      )
+    ).as("text/javascript")
+  }
+
 
 }

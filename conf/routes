@@ -4,6 +4,7 @@
 
 GET     /docs                       controllers.Application.index
 GET     /test.html	                controllers.Application.testTable
+GET     /javascriptRoutes           controllers.Application.javascriptRoutes
 POST    /p/c/w/edit                 controllers.EditWallpaperPublic.edit
 POST    /p/c/w/accept               controllers.EditWallpaperPublic.accept
 POST    /p/c/w/reject               controllers.EditWallpaperPublic.reject

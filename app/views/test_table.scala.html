@@ -2,9 +2,10 @@
 <html ng-app="myApp">
   <head>
     <script src="@routes.Assets.at("js/jquery-1.9.1.min.js")"></script>
-    <script src="@routes.Assets.at("js/bootstrap.js")"></script>
+    <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
     <link href="@routes.Assets.at("css/bootstrap.min.css")" rel="stylesheet" media="screen"/>
     <script src="@routes.Assets.at("js/angular.min.js")"></script>
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
     
     <script src="@routes.Assets.at("js/w/test.js")"></script>
   </head>
@@ -24,8 +25,8 @@
                    <td>{{item.field}}</td>
                    <td>{{item.value}}</td>
                    <td>
-                        <a class="btn btn-mini" href="#" ng-click="accept()"><i class="icon-ok"></i></a>
-                        <a class="btn btn-mini" href="#" ng-click="reject()"><i class="icon-remove-sign"></i></a>
+                        <a class="btn btn-mini" href="#" ng-click="accept(item)"><i class="icon-ok"></i></a>
+                        <a class="btn btn-mini" href="#" ng-click="reject(item)"><i class="icon-remove-sign"></i></a>
                    </td>
                </tr>
             </table>

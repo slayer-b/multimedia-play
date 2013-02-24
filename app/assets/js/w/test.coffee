@@ -6,19 +6,19 @@ app.controller 'TestTable', ($scope, $http) ->
     $scope.data = []
     
     $scope.refresh = () ->
-      $http.post('/p/c/w/view_cache.json', '{}').success (response) ->
+      $http.post(jsRoutes.controllers.EditWallpaperPublic.view().url, '{}').success (response) ->
         console.log('Refresh: request data from server')
         $scope.data = response
 
-    $scope.accept = () ->
-      $http.post('/p/c/w/accept', '{}').success (response) ->
-        console.log('Accept')
+    $scope.accept = (entry) ->
+      $http.post('/p/c/w/accept', entry).success (response) ->
+        console.log('Accept ' + entry.entry_id)
 
-    $scope.reject = () ->
-      $http.post('/p/c/w/reject', '{}').success (response) ->
-        console.log('Reject')
+    $scope.reject = (entry) ->
+      $http.post('/p/c/w/reject', entry).success (response) ->
+        console.log('Reject ' + entry.entry_id)
 
-    $http.post('/p/c/w/view_cache.json', '{}').success (response) ->
+    $http.post(jsRoutes.controllers.EditWallpaperPublic.view().url, '{}').success (response) ->
         console.log 'Init: request data from server'
         $scope.data = response
         
@@ -30,4 +30,4 @@ app.controller 'TestEdit', ($scope, $http) ->
     
     $scope.sendData = () ->
         console.log('Send data: id=' + $scope.wallpaper.id)
-        $http.post('/p/c/w/edit', $scope.wallpaper).success
+        $http.post(jsRoutes.controllers.EditWallpaperPublic.edit().url, $scope.wallpaper).success

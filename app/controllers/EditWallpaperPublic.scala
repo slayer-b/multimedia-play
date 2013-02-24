@@ -13,8 +13,9 @@ object EditWallpaperPublic extends Controller {
   val logger = Logger
 
   implicit val wallpaperEntryReads = Json.reads[WallpaperEntry]
-  implicit val wallpaperEntryListWrites = Json.writes[WallpaperEntry]
-
+  implicit val wallpaperEntryRezReads = Json.reads[WallpaperEntryRez]
+  implicit val wallpaperEntryRezWrites = Json.writes[WallpaperEntryRez]
+  
   def edit = Action(parse.json) { implicit request =>
     logger.info("edit")
     Json.fromJson[WallpaperEntry](request.body).map { data =>
@@ -30,6 +31,7 @@ object EditWallpaperPublic extends Controller {
   def view = Action(parse.json) {implicit request =>
     logger.info("view")
     Ok(JsArray(
+      //MyTestEhCache.generateRandom().map(Json.toJson(_))
       MyTestEhCache.findAll().map(Json.toJson(_))
     ))
   }
@@ -41,9 +43,17 @@ object EditWallpaperPublic extends Controller {
 
   def reject = Action(parse.json) {implicit request =>
     logger.info("reject")
-    Ok("Rejected")
+    Json.fromJson[WallpaperEntryRez](request.body).map { data =>
+      MyTestEhCache.removeEntry(data)
+      Ok(Json.toJson(
+        Map("status" -> "OK")
+      ))
+    }.recoverTotal {
+      e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
+    }
   }
 
 }
 
 case class WallpaperEntry(id: String, field: String, value: String)
+case class WallpaperEntryRez(id: String, entry_id: Int, field: String, value: String)
