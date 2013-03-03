@@ -4,13 +4,22 @@ import play.api.mvc._
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Json, _}
+import play.api.libs.concurrent.Execution.Implicits._
 
-/**
- * User: slayer
- * Date: 18.12.12
- */
+import actors._
+
+import akka.util.Timeout
+import akka.pattern.ask
+
+import java.util.concurrent.TimeUnit
+import actors.RemoveEntry
+import actors.Replace
+import play.api.libs.json.JsArray
+
 object EditWallpaperPublic extends Controller {
   val logger = Logger
+
+  implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
   implicit val wallpaperEntryReads = Json.reads[WallpaperEntry]
   implicit val wallpaperEntryRezReads = Json.reads[WallpaperEntryRez]
@@ -19,7 +28,7 @@ object EditWallpaperPublic extends Controller {
   def edit = Action(parse.json) { implicit request =>
     logger.info("edit")
     Json.fromJson[WallpaperEntry](request.body).map { data =>
-      MyTestEhCache.replace(data)
+      MyActors.wallpaperComment ! Replace(data)
       Ok(Json.toJson(
         Map("status" -> "OK")
       ))
@@ -29,11 +38,19 @@ object EditWallpaperPublic extends Controller {
   }
   
   def view = Action(parse.json) {implicit request =>
-    logger.info("view")
-    Ok(JsArray(
-      //MyTestEhCache.generateRandom().map(Json.toJson(_))
-      MyTestEhCache.findAll().map(Json.toJson(_))
-    ))
+    Async {
+      logger.info("view")
+      val commentsFuture = MyActors.wallpaperComment ? FindAll
+      for {
+        comments <- commentsFuture
+      } yield comments match {
+        case WallpaperCommentList(list) =>
+          Ok(JsArray(
+            //MyTestEhCache.generateRandom().map(Json.toJson(_))
+            list.map(Json.toJson(_))
+          ))
+      }
+    }
   }
 
   def accept = Action(parse.json) {implicit request =>
@@ -44,7 +61,7 @@ object EditWallpaperPublic extends Controller {
   def reject = Action(parse.json) {implicit request =>
     logger.info("reject")
     Json.fromJson[WallpaperEntryRez](request.body).map { data =>
-      MyTestEhCache.removeEntry(data)
+      MyActors.wallpaperComment ! RemoveEntry(data)
       Ok(Json.toJson(
         Map("status" -> "OK")
       ))
