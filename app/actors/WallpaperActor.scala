@@ -11,7 +11,7 @@ import scala.annotation.tailrec
 import controllers.WallpaperEntryRez
 import controllers.WallpaperEntry
 
-class WallpaperCommentActor extends Actor {
+class WallpaperActor extends Actor {
 
   val ehPlugin = Play.current.plugin(classOf[EhCachePlugin])
   val cache = ehPlugin.get.cache
@@ -33,7 +33,7 @@ class WallpaperCommentActor extends Actor {
         }
         i += 1
       }
-      sender ! WallpaperCommentList(rez)
+      sender ! WallpaperList(rez)
     case GenerateRandom =>
       Logger.info("Generate random")
       @tailrec
@@ -41,7 +41,7 @@ class WallpaperCommentActor extends Actor {
         if (n == 0) rez
         else generate(WallpaperEntryRez("1", n, "name", "name" + n) :: rez, n-1)
       }
-      sender ! WallpaperCommentList(generate(n = 10))
+      sender ! WallpaperList(generate(n = 10))
     case Remove(id) =>
       Logger.info("Remove entry: id=" + id)
       Cache.remove(id.toString)
@@ -77,7 +77,7 @@ case class Remove(id: Long) extends Message
 case class RemoveEntry(entry: WallpaperEntryRez) extends Message
 case class Replace(entry: WallpaperEntry) extends Message
 
-case class WallpaperCommentList(list: List[WallpaperEntryRez])
+case class WallpaperList(list: List[WallpaperEntryRez])
 
 case class WallpaperEntries(values: Map[String, WallpaperField])
 case class WallpaperField(max: Int, entries: Map[Int, String])

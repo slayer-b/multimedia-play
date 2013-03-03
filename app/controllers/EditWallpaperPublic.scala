@@ -15,9 +15,10 @@ import java.util.concurrent.TimeUnit
 import actors.RemoveEntry
 import actors.Replace
 import play.api.libs.json.JsArray
+import play.api.db.DB
+import model.WallpaperRepo
 
 object EditWallpaperPublic extends Controller {
-  val logger = Logger
 
   implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
@@ -26,9 +27,9 @@ object EditWallpaperPublic extends Controller {
   implicit val wallpaperEntryRezWrites = Json.writes[WallpaperEntryRez]
   
   def edit = Action(parse.json) { implicit request =>
-    logger.info("edit")
+    Logger.info("edit")
     Json.fromJson[WallpaperEntry](request.body).map { data =>
-      MyActors.wallpaperComment ! Replace(data)
+      MyActors.wallpaper ! Replace(data)
       Ok(Json.toJson(
         Map("status" -> "OK")
       ))
@@ -39,12 +40,12 @@ object EditWallpaperPublic extends Controller {
   
   def view = Action(parse.json) {implicit request =>
     Async {
-      logger.info("view")
-      val commentsFuture = MyActors.wallpaperComment ? FindAll
+      Logger.info("view")
+      val wallpaperFuture = MyActors.wallpaper ? FindAll
       for {
-        comments <- commentsFuture
-      } yield comments match {
-        case WallpaperCommentList(list) =>
+        wallpapers <- wallpaperFuture
+      } yield wallpapers match {
+        case WallpaperList(list) =>
           Ok(JsArray(
             //MyTestEhCache.generateRandom().map(Json.toJson(_))
             list.map(Json.toJson(_))
@@ -53,15 +54,30 @@ object EditWallpaperPublic extends Controller {
     }
   }
 
+  def viewDB = Action(parse.json) {implicit request =>
+      Logger.info("view db")
+      val wallpapers = WallpaperRepo.findAll(10)
+      Ok(JsArray(
+        wallpapers.map { w =>
+          Json.obj(
+            "id" -> w.id,
+            "entry_id" -> JsNull,
+            "field" -> "name",
+            "value" -> w.name
+          )
+        }
+      ))
+  }
+
   def accept = Action(parse.json) {implicit request =>
-    logger.info("accept")
+    Logger.info("accept")
     Ok("Accepted")
   }
 
   def reject = Action(parse.json) {implicit request =>
-    logger.info("reject")
+    Logger.info("reject")
     Json.fromJson[WallpaperEntryRez](request.body).map { data =>
-      MyActors.wallpaperComment ! RemoveEntry(data)
+      MyActors.wallpaper ! RemoveEntry(data)
       Ok(Json.toJson(
         Map("status" -> "OK")
       ))

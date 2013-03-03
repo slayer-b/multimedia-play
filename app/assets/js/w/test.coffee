@@ -10,6 +10,11 @@ app.controller 'TestTable', ($scope, $http) ->
         console.log('Refresh: request data from server')
         $scope.data = response
 
+    $scope.refreshDB = () ->
+      $http.post(jsRoutes.controllers.EditWallpaperPublic.viewDB().url, '{}').success (response) ->
+        console.log('Refresh: request data from db server')
+        $scope.data = response
+
     $scope.accept = (entry) ->
       $http.post('/p/c/w/accept', entry).success (response) ->
         console.log('Accept ' + entry.entry_id)

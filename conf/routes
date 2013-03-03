@@ -9,6 +9,7 @@ POST    /p/c/w/edit                 controllers.EditWallpaperPublic.edit
 POST    /p/c/w/accept               controllers.EditWallpaperPublic.accept
 POST    /p/c/w/reject               controllers.EditWallpaperPublic.reject
 POST    /p/c/w/view_cache.json      controllers.EditWallpaperPublic.view
+POST    /p/c/w/view_cache_db.json   controllers.EditWallpaperPublic.viewDB
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /p/a/*file                  controllers.Assets.at(path="/public", file)

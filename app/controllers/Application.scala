@@ -22,6 +22,7 @@ object Application extends Controller {
     Ok(
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.EditWallpaperPublic.view,
+        routes.javascript.EditWallpaperPublic.viewDB,
         routes.javascript.EditWallpaperPublic.edit
       )
     ).as("text/javascript")
