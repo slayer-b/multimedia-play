@@ -1,15 +1,14 @@
 package actors
 
 import akka.actor.Actor
-import play.api.{cache, Logger, Play}
+import play.api.{Logger, Play}
 import play.api.cache.{Cache, EhCachePlugin}
 import play.api.Play.current
-
-import controllers.{WallpaperEntry, WallpaperEntryRez}
 
 import scala.annotation.tailrec
 import controllers.WallpaperEntryRez
 import controllers.WallpaperEntry
+import model.WallpaperRepo
 
 class WallpaperActor extends Actor {
 
@@ -55,6 +54,17 @@ class WallpaperActor extends Actor {
         val newField = WallpaperField(oldField.max, newValues)
         Cache.set(entry.id.toString, WallpaperEntries(old.values + (entry.field -> newField)))
       }
+    case AcceptEntry(entry) =>
+      Logger.info("Accept entry: id=" + entry.id + " entry_id=" + entry.entry_id)
+      for {
+        old <- Cache.getAs[WallpaperEntries](entry.id.toString)
+        oldField <- old.values.get(entry.field)
+      } {
+        val newValues = oldField.entries - entry.entry_id
+        val newField = WallpaperField(oldField.max, newValues)
+        Cache.set(entry.id.toString, WallpaperEntries(old.values + (entry.field -> newField)))
+        WallpaperRepo.update(entry.id.toLong, entry.field, entry.value)
+      }
     case Replace(entry) =>
       Logger.info("Adding new entry: id=" + entry.id)
       val newEntry = Cache.getAs[WallpaperEntries](entry.id.toString) match {
@@ -74,6 +84,7 @@ sealed trait Message
 case object FindAll extends Message
 case object GenerateRandom extends Message
 case class Remove(id: Long) extends Message
+case class AcceptEntry(entry: WallpaperEntryRez) extends Message
 case class RemoveEntry(entry: WallpaperEntryRez) extends Message
 case class Replace(entry: WallpaperEntry) extends Message
 

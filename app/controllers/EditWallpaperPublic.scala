@@ -71,7 +71,14 @@ object EditWallpaperPublic extends Controller {
 
   def accept = Action(parse.json) {implicit request =>
     Logger.info("accept")
-    Ok("Accepted")
+    Json.fromJson[WallpaperEntryRez](request.body).map { data =>
+      MyActors.wallpaper ! AcceptEntry(data)
+      Ok(Json.toJson(
+        Map("status" -> "OK")
+      ))
+    }.recoverTotal {
+      e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
+    }
   }
 
   def reject = Action(parse.json) {implicit request =>

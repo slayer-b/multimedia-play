@@ -5,6 +5,7 @@ import java.sql.Timestamp
 
 import play.api.db.DB
 import play.api.Play.current
+import play.api.Logger
 
 import Database.threadLocalSession
 
@@ -29,6 +30,11 @@ case class Wallpaper(
 object WallpaperRepo {
   lazy val database = Database.forDataSource(DB.getDataSource())
 
+  val FIELD_VALUES = Map(
+    "description" -> description _,
+    "title" -> title _
+  )
+
   def findAll(quantity: Int) = {
     database withSession {
       val query = for (
@@ -37,6 +43,18 @@ object WallpaperRepo {
       query.take(quantity).list()
     }
   }
+
+  def update(id: Long, field: String, value: String) = {
+    database withSession {
+      val query = for (
+        w <- Wallpapers if w.id === id
+      ) yield FIELD_VALUES(field)(w)
+      query.update(value)
+    }
+  }
+
+  private def description(w: Wallpapers.type) = w.description
+  private def title(w: Wallpapers.type) = w.title
 }
 
 object Wallpapers extends Table[Wallpaper]("photo") {
