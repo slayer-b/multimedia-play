@@ -32,7 +32,8 @@ object WallpaperRepo {
 
   val FIELD_VALUES = Map(
     "description" -> description _,
-    "title" -> title _
+    "title" -> title _,
+    "tags" -> tags _
   )
 
   def findAll(quantity: Int) = {
@@ -55,6 +56,7 @@ object WallpaperRepo {
 
   private def description(w: Wallpapers.type) = w.description
   private def title(w: Wallpapers.type) = w.title
+  private def tags(w: Wallpapers.type) = w.tags
 }
 
 object Wallpapers extends Table[Wallpaper]("photo") {

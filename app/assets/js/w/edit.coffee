@@ -1,15 +1,21 @@
 console = window.console
 
 Editing =
-  makeEditable: (id, type) ->
+  makeEditable: (id, type, title) ->
     console.info 'making hover'
     elem = $ id
-    elem.mouseenter () -> elem.css 'color', 'red'
-    elem.mouseleave () -> elem.css 'color', ''
+    elem.mouseenter () ->
+      elem.append '<img alt="редактировать" style="margin-left: 15px;" border="0" src="' + context_path + '/img/options.jpg">'
+      elem.css 'color', 'red'
+      elem.css 'cursor', 'pointer'
+    elem.mouseleave () ->
+      elem.children('img').remove()
+      elem.css 'color', ''
     elem.click () ->
       console.info 'click open'
       Editing.type = type
       Editing.editDialogValue.val elem.text()
+      Editing.editDialog.dialog 'option', 'title', 'Редактировать ' + title
       Editing.editDialog.dialog 'open'
   init: () ->
     Editing.editDialogValue = $ '#edit-dialog-value'
@@ -29,10 +35,12 @@ Editing =
           JSON.stringify
             'value': Editing.editDialogValue.val()
             'field': Editing.type
-            'id': wallpaper_id
+            'id': '' + wallpaper_id
         success: (data) ->
           console.info 'resp = [' + data + ']'
           Editing.editDialog.dialog 'close'
+      .fail (jqXHR, textStatus) ->
+        alert 'Произошла ошибка: ' + textStatus
 
 $ ->
   $.ajax
@@ -42,5 +50,5 @@ $ ->
         modal: true
         autoOpen: false
       Editing.init()
-      Editing.makeEditable '#description', 'description'
+      Editing.makeEditable '#description', 'description', 'описание'
 
