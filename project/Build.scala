@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "multimedia-play"
-  val appVersion      = "1.0-SNAPSHOT"
+  val appVersion      = "1.0-" + System.getProperty("build.number")
 
   val appDependencies = Seq(
     "mysql" % "mysql-connector-java" % "5.1.18",
