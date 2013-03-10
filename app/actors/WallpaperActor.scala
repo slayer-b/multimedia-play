@@ -1,7 +1,7 @@
 package actors
 
 import akka.actor.Actor
-import play.api.{Logger, Play}
+import play.api.{Application, Logger}
 import play.api.cache.{Cache, EhCachePlugin}
 import play.api.Play.current
 
@@ -12,8 +12,11 @@ import model.WallpaperRepo
 
 class WallpaperActor extends Actor {
 
-  val ehPlugin = Play.current.plugin(classOf[EhCachePlugin])
-  val cache = ehPlugin.get.cache
+  private def cache(implicit app: Application) =
+    app.plugin[EhCachePlugin] match {
+      case Some(plugin) => plugin.cache
+      case None => throw new Exception("There is no cache plugin registered. Make sure at least one CachePlugin implementation is enabled.")
+    }
 
   def receive = {
     case FindAll =>

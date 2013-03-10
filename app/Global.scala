@@ -1,20 +1,28 @@
-import play.api.db.DB
-import play.api.GlobalSettings
 
-import model.DataAccessLayer.profile.simple._
-
-// Use the implicit threadLocalSession
-import Database.threadLocalSession
-
-import play.api.Application
-import play.api.Play.current
-
+import play.api.{Logger, GlobalSettings, Application}
 
 object Global extends GlobalSettings {
 
   override def onStart(app: Application) {
-
-    lazy val database = Database.forDataSource(DB.getDataSource())
-
+    Logger.info("Application started...")
   }
+
+  override def onStop(app: Application) {
+    Logger.info("Application shutdown...")
+  }
+
+  //TODO: implement some kind of an error page
+//  override def onError(request: RequestHeader, ex: Throwable) = {
+//    Logger.info("Application error")
+//    InternalServerError(
+//      views.html.errorPage(ex)
+//    )
+//  }
+
+  //TODO: implement some kind of an not found page
+//  override def onHandlerNotFound(request: RequestHeader): Result = {
+//    NotFound(
+//      views.html.notFoundPage(request.path)
+//    )
+//  }
 }

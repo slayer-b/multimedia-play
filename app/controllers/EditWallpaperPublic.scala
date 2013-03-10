@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit
 import actors.RemoveEntry
 import actors.Replace
 import play.api.libs.json.JsArray
-import play.api.db.DB
 import model.WallpaperRepo
 
 object EditWallpaperPublic extends Controller {
