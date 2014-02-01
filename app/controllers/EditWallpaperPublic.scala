@@ -37,8 +37,7 @@ object EditWallpaperPublic extends Controller {
     }
   }
   
-  def view = Action(parse.json) {implicit request =>
-    Async {
+  def view = Action.async(parse.json) {implicit request =>
       Logger.info("view")
       val wallpaperFuture = MyActors.wallpaper ? FindAll
       for {
@@ -50,7 +49,6 @@ object EditWallpaperPublic extends Controller {
             list.map(Json.toJson(_))
           ))
       }
-    }
   }
 
   def viewDB = Action(parse.json) {implicit request =>

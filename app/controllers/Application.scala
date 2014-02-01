@@ -17,6 +17,11 @@ object Application extends Controller {
     Logger.info("Rendering table view")
     Ok(views.html.test_table())
   }
+
+  def cms = Action { implicit request =>
+    Logger.info("Rendering cms view")
+    Ok(views.html.cms())
+  }
   
   def javascriptRoutes = Action { implicit request =>
     Ok(

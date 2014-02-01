@@ -2,14 +2,16 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /docs                       controllers.Application.index
-GET     /test.html	                controllers.Application.testTable
-GET     /javascriptRoutes           controllers.Application.javascriptRoutes
-POST    /p/c/w/edit                 controllers.EditWallpaperPublic.edit
-POST    /p/c/w/accept               controllers.EditWallpaperPublic.accept
-POST    /p/c/w/reject               controllers.EditWallpaperPublic.reject
-POST    /p/c/w/view_cache.json      controllers.EditWallpaperPublic.view
-POST    /p/c/w/view_cache_db.json   controllers.EditWallpaperPublic.viewDB
+GET         /docs                            controllers.Application.index
+GET         /test.html                       controllers.Application.testTable
+GET         /cms.html                        controllers.Application.cms
+GET         /cms/comment.json                    controllers.CommentController.fields
+GET         /javascriptRoutes                controllers.Application.javascriptRoutes
+POST        /p/c/w/edit                      controllers.EditWallpaperPublic.edit
+POST        /p/c/w/accept                    controllers.EditWallpaperPublic.accept
+POST        /p/c/w/reject                    controllers.EditWallpaperPublic.reject
+POST        /p/c/w/view_cache.json           controllers.EditWallpaperPublic.view
+POST        /p/c/w/view_cache_db.json        controllers.EditWallpaperPublic.viewDB
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /p/a/*file                  controllers.Assets.at(path="/public", file)
+GET         /p/a/*file                       controllers.Assets.at(path="/public", file)

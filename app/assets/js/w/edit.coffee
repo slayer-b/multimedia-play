@@ -51,4 +51,3 @@ $ ->
         autoOpen: false
       Editing.init()
       Editing.makeEditable '#description', 'description', 'описание'
-

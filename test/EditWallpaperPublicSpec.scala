@@ -5,9 +5,6 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 import play.api.libs.json.Json
-import org.codehaus.jackson.annotate.JsonValue
-import play.api.Logger
-import akka.testkit.TestKit
 
 class EditWallpaperPublicSpec extends Specification {
   val id = "1"
